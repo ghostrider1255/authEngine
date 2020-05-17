@@ -1,0 +1,114 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE")
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4+"
+    }
+}
+
+plugins {
+    id 'org.springframework.boot' version '2.2.7.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java'
+    id 'maven-publish'
+    id 'com.palantir.docker' version '0.25.0'
+}
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+//apply plugin: 'io.spring.gradle.dependencymanagement.DependencyManagementPlugin'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'maven-publish'
+//apply plugin: 'org.jfrog.gradle.plugin.artifactory.ArtifactoryPlugin'
+
+group 'com.javasree'
+version project.properties.containsKey("releaseVersion") ? "${artifactMajorVersion}" : "${artifactMajorVersion}-${artifactBuildNumber}"
+sourceCompatibility = 1.8
+
+ext {
+    springCloudVersion ='Greenwich.RELEASE'
+    artifactName ='<artifact>'
+    artifactory = 'http://localhost:8081/artifactory/'
+    artifactoryRepo = 'gradle-lib-release'
+    artifactorySnapShotRepo = 'gradle-lib-snashot'
+    artifactoryRepo3pp = 'pub-gradle-remote'
+    artifactoryUser = System.getProperty("user", "")
+    artifactoryPassword = System.getProperty("password", "")
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url "${artifactory}${artifactoryRepo3pp}"
+        credentials {               // Optional resolver credentials (leave out to use anonymous resolution)
+            username = "admin" // Artifactory user name
+            password = "password" // Password or API Key
+        }
+    }
+}
+
+publishing.publications {
+    maven(MavenPublication) {
+        artifact bootJar
+//      groupId 'authengine'
+//      artifactId artifactName
+//      version '1.0-SNAPSHOT'
+        from components.java
+    }
+}
+
+publishing.repositories {
+    maven {
+        credentials {
+            username = "admin" // Artifactory user name
+            password = "password" // Password or API Key
+        }
+        if(project.version.endsWith('-SNAPSHOT')) {
+            url "${artifactory}${artifactorySnapShotRepo}"
+        } else {
+            url "${artifactory}${artifactoryRepo}"
+        }
+    }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        //mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+    }
+}
+
+docker {
+    name "localhost:5000/${project.name}:${project.version}"
+    files tasks.bootJar.outputs
+    //tag 'localhost:5000/${project.name}:${project.version}'
+    dockerfile file('Dockerfile')
+    //buildArgs([HOST_APP_JAR_LOC: 'version'])
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web',
+            'org.springframework.boot:spring-boot-starter-data-jpa',
+            'org.springframework.boot:spring-boot-starter-security',
+            'org.springframework.boot:spring-boot-starter-test',
+            'org.springframework.boot:spring-boot-devtools',
+            'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client',
+            'com.h2database:h2:1.4.188',
+            'org.modelmapper:modelmapper:2.3.5',
+            'io.jsonwebtoken:jjwt:0.9.1',
+            'mysql:mysql-connector-java:8.0.11',
+            'com.google.code.gson:gson:2.8.2'
+}
+
+task versionIncr {
+    Properties props = new Properties()
+    File propsFile = new File('gradle.properties')
+    props.load(propsFile.newDataInputStream())
+    Integer nextbuildnum = ( ((props.getProperty('artifactBuildNumber')) as BigDecimal) + 1 )
+    props.setProperty('artifactBuildNumber', nextbuildnum.toString())
+    props.store(propsFile.newWriter(), null)
+    props.load(propsFile.newDataInputStream())
+}
