@@ -27,7 +27,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter{
     @Override
     public void configure(HttpSecurity http) throws Exception{
         http.csrf().disable();
-        http.authorizeRequests().antMatchers("/users/**").hasAnyRole("READ","WRITE")
+        http.authorizeRequests().antMatchers("/users/**")
+                //.hasIpAddress("")
+                .hasAnyRole("READ","WRITE")
 
                 //http.authorizeRequests.antMatchers("/**").hasIpAddress(environment.getProperty("my.gatekeeper.ip"))
                 .and().addFilter(getAuthenticationFilter());
@@ -38,7 +40,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter{
     private AuthFilter getAuthenticationFilter() throws Exception{
         AuthFilter authFilter = new AuthFilter(userService,environment,this.authenticationManager());
         //authFilter.setAuthenticationManager(authenticationManager());
-        authFilter.setFilterProcessesUrl(environment.getProperty("my.login.url.path"));
+        authFilter.setFilterProcessesUrl(environment.getProperty("api.login.url.path"));
         return authFilter;
     }
 

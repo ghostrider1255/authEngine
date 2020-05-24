@@ -1,8 +1,11 @@
 package com.javasree.ms.authengine.model.dto;
 
+import java.io.Serializable;
 import java.util.Collection;
 
-public class RoleDto {
+public class RoleDto implements Serializable {
+
+    private static final long serialVersionUID = 42L;
 
     private String name;
 
