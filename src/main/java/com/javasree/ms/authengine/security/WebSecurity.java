@@ -28,8 +28,10 @@ public class WebSecurity extends WebSecurityConfigurerAdapter{
     public void configure(HttpSecurity http) throws Exception{
         http.csrf().disable();
         http.authorizeRequests().antMatchers("/users/**")
-                //.hasIpAddress("")
-                .hasAnyRole("READ","WRITE")
+                //.permitAll()
+                //.hasIpAddress(this.environment.getProperty("my.gateway.ip"))
+                .access("hasIpAddress('"+this.environment.getProperty("my.gateway.ip")+"')")
+                //.hasAnyRole("READ","WRITE")
 
                 //http.authorizeRequests.antMatchers("/**").hasIpAddress(environment.getProperty("my.gatekeeper.ip"))
                 .and().addFilter(getAuthenticationFilter());
