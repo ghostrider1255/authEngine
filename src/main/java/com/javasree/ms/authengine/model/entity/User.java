@@ -29,7 +29,7 @@ public class User {
     @Column(name="isActive")
     private boolean isActive;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinTable(
             name = "UserRoles",
             joinColumns = @JoinColumn(
