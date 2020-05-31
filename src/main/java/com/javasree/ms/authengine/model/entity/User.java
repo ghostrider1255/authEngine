@@ -20,7 +20,7 @@ public class User {
     @Column(name="email", nullable = false, length = 120, unique = true)
     private String email;
 
-    @Column(name="userId", nullable = false, unique = true)
+    @Column(name="userId", nullable = false, length = 120,unique = true)
     private String userId;
 
     @Column(name="encryptedPassword", nullable = false)
