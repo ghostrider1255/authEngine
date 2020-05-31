@@ -9,6 +9,8 @@ import com.javasree.ms.authengine.model.entity.User;
 import com.javasree.ms.authengine.model.vo.UserResponseVO;
 import com.javasree.ms.authengine.model.vo.UserVO;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
+import org.modelmapper.spi.MatchingStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,6 +26,8 @@ public class BeanConfig {
     @Bean
     public ModelMapper modelMapper(){
         ModelMapper modelMapper = new ModelMapper();
+
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
         modelMapper.createTypeMap(PrivilegeDto.class, Privilege.class)
             .addMapping( PrivilegeDto::getName, Privilege::setName);
