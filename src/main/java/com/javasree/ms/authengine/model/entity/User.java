@@ -38,6 +38,9 @@ public class User {
                     name = "roleId", referencedColumnName = "id"))
     private Collection<Role> roles;
 
+
+    public User(){}
+
     public Long getId() {
         return id;
     }

@@ -4,6 +4,7 @@ public class RequestLogin {
     private String email;
     private String password;
 
+    public RequestLogin(){}
     public String getEmail() {
         return email;
     }

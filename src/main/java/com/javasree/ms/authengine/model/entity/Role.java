@@ -25,6 +25,8 @@ public class Role {
                     name = "privilegeId", referencedColumnName = "id"))
     private Collection<Privilege> privileges;
 
+    public Role(){}
+
     public Long getId() {
         return id;
     }

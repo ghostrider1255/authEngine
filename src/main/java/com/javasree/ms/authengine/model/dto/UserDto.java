@@ -15,6 +15,8 @@ public class UserDto implements Serializable {
     private String encryptedPassword;
     private Collection<RoleDto> roles;
 
+    public UserDto(){}
+
     public String getFirstName() {
         return firstName;
     }

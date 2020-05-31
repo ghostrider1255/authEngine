@@ -7,6 +7,8 @@ public class UserResponseVO {
     private String email;
     private String userId;
 
+    public UserResponseVO(){}
+
     public String getFirstName() {
         return firstName;
     }

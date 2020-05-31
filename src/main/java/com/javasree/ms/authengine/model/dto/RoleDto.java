@@ -11,6 +11,8 @@ public class RoleDto implements Serializable {
 
     private Collection<PrivilegeDto> privileges;
 
+    public RoleDto(){}
+
     public String getName() {
         return name;
     }

@@ -12,6 +12,8 @@ public class UserVO {
     private String email;
     private Collection<RoleDto> roles;
 
+    public UserVO(){}
+
     public String getFirstName() {
         return firstName;
     }
