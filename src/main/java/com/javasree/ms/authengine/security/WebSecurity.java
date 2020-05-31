@@ -27,14 +27,15 @@ public class WebSecurity extends WebSecurityConfigurerAdapter{
     @Override
     public void configure(HttpSecurity http) throws Exception{
         http.csrf().disable();
-        http.authorizeRequests().antMatchers("/users/**")
-                //.permitAll()
+        http.authorizeRequests().antMatchers("/**")
+                .permitAll()
                 //.hasIpAddress(this.environment.getProperty("my.gateway.ip"))
-                .access("hasIpAddress('"+this.environment.getProperty("my.gateway.ip")+"')")
+                //.access("hasIpAddress('"+this.environment.getProperty("my.gateway.ip")+"')")
                 //.hasAnyRole("READ","WRITE")
 
                 //http.authorizeRequests.antMatchers("/**").hasIpAddress(environment.getProperty("my.gatekeeper.ip"))
-                .and().addFilter(getAuthenticationFilter());
+                .and()
+                .addFilter(getAuthenticationFilter());
 
         http.headers().frameOptions().disable();
     }
