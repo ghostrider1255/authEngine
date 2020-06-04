@@ -8,6 +8,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 public class AuthFilter extends UsernamePasswordAuthenticationFilter {
     private UserService userService;
@@ -63,10 +65,12 @@ public class AuthFilter extends UsernamePasswordAuthenticationFilter {
         UserDto userDto  = userService.getUserDetailsByEmail(userName);
         UserDetails userDetails = userService.loadUserByUsername(userName);
 
+        String authorities = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
+
         String token = Jwts.builder()
                 .setSubject(userDto.getUserId())
                 .setExpiration( new Date(System.currentTimeMillis() + Long.parseLong(environment.getProperty("jwt.token.expiration"))))
-                .claim("roles",userDetails.getAuthorities())
+                .claim("roles",authorities)
                 .signWith(SignatureAlgorithm.HS512, environment.getProperty("jwt.token.secret"))
                 .compact();
 

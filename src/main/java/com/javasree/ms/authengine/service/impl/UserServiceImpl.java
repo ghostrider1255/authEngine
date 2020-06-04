@@ -16,12 +16,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
     @Autowired private UserRepository userRepository;
@@ -73,7 +75,7 @@ public class UserServiceImpl implements UserService {
                 collection.addAll(role.getPrivileges())
             );
         collection.forEach( privilege ->{
-                privileges.add(privilege.getName());
+                privileges.add("ROLE_"+privilege.getName());
         });
         return privileges;
     }
