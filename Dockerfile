@@ -33,11 +33,15 @@ VOLUME $APP_LOGS_DIR
 COPY *.jar $APP_HOME_DIR/
 COPY filebeat.yml $APP_CONFIG_DIR/
 COPY log4j2.xml $APP_CONFIG_DIR/
+COPY application.sh $APP_HOME_DIR/
 
 RUN mv ${APP_HOME_DIR}/*.jar ${APP_HOME_DIR}/application.jar
 RUN chmod 755 ${APP_HOME_DIR}/application.jar
+RUN chmod 755 ${APP_HOME_DIR}/application.sh
 
 ENV APP_CONFIG_DIR $APP_CONFIG_DIR
 
-ENTRYPOINT ["java","-jar","/opt/app/application.jar","--spring.config.location=file:${APP_CONFIG_DIR}/","--logging.config=file:${APP_CONFIG_DIR}/log4j2.xml"]
-CMD ["filebeat", "-e", "-c","${APP_CONFIG_DIR}/filebeat.yml","-e","-d","\"*\""]
+#ENTRYPOINT ["java","-jar","/opt/app/application.jar","--spring.config.location=file:${APP_CONFIG_DIR}/","--logging.config=file:${APP_CONFIG_DIR}/log4j2.xml"]
+#CMD ["filebeat", "-e", "-c","${APP_CONFIG_DIR}/filebeat.yml","-e","-d","\"*\""]
+
+ENTRYPOINT ["/opt/app/application.sh"]
