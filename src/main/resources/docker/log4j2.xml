@@ -6,7 +6,7 @@
         </Console>
         <RollingFile name="LogToFile" fileName="/var/logs/appLogs/app.log" filePattern="/var/logs/appLogs/app.%d{dd-MMM}.log.gz">
             <PatternLayout>
-                <Pattern>%d{DATE} %p %c{10} [%t] %m%n</Pattern>
+                <Pattern>%d{DATE} [%t] [%level] %p %c{10} %m%n</Pattern>
             </PatternLayout>
             <Policies>
                 <SizeBasedTriggeringPolicy size="50MB" />

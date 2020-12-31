@@ -100,7 +100,8 @@ dependencies {
             'org.modelmapper:modelmapper:2.3.5',
             'io.jsonwebtoken:jjwt:0.9.1',
             'mysql:mysql-connector-java:8.0.11',
-            'com.google.code.gson:gson:2.8.2'
+            'com.google.code.gson:gson:2.8.2',
+            'org.springframework.boot:spring-boot-starter-log4j2'
 }
 
 configurations {
@@ -111,7 +112,7 @@ configurations {
 
 task versionIncr {
     Properties props = new Properties()
-    File propsFile = new File('gradle.properties')
+    File propsFile = new File("${project.projectDir}\\gradle.properties")
     props.load(propsFile.newDataInputStream())
     Integer nextbuildnum = ( ((props.getProperty('artifactBuildNumber')) as BigDecimal) + 1 )
     props.setProperty('artifactBuildNumber', nextbuildnum.toString())
