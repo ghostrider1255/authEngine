@@ -7,8 +7,8 @@ ARG APP_HOME_DIR=/opt/app
 ARG APP_CONFIG_DIR=/opt/config
 ARG APP_LOGS_DIR=/var/logs/appLogs
 
-RUN apt-get update && \
-    apt-get install -y curl wget && \
+RUN apk update && \
+    apk add curl wget && \
     #wget https://download.elastic.co/beats/filebeat/filebeat-${FILEBEAT_VERSION}-x86_64.tar.gz -O /opt/filebeat.tar.gz && \
     wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${FILEBEAT_VERSION}-linux-x86_64.tar.gz -O /opt/filebeat.tar.gz && \
     cd /opt && \
@@ -17,9 +17,8 @@ RUN apt-get update && \
     cp filebeat /bin && \
     cd /opt && \
     rm -rf filebeat* && \
-    apt-get purge -y wget && \
-    apt-get autoremove -y && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    apk del wget && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN mkdir -p $APP_HOME_DIR \
     mkdir -p $APP_CONFIG_DIR \
