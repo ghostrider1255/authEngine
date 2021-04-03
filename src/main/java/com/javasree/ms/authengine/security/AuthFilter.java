@@ -46,7 +46,7 @@ public class AuthFilter extends UsernamePasswordAuthenticationFilter {
                     new UsernamePasswordAuthenticationToken
                             (requestLoginModel.getEmail(),
                                     requestLoginModel.getPassword(),
-                                    new java.util.ArrayList())
+                                    new java.util.ArrayList<>())
             );
         }catch (IOException ioException){
             System.out.println(ioException.getMessage());

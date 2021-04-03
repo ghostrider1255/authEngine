@@ -1,4 +1,4 @@
-FROM openjdk:8
+FROM openjdk:8-alpine
 MAINTAINER raju
 ENV FILEBEAT_VERSION=7.10.0
 
