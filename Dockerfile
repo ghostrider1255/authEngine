@@ -7,10 +7,10 @@ RUN apk update && \
     wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${FILEBEAT_VERSION}-linux-x86_64.tar.gz -O /opt/filebeat.tar.gz && \
     cd /opt && \
     tar xzvf filebeat.tar.gz && \
-    cd filebeat-* && \
-    cp filebeat /bin && \
-    cd /opt && \
-    rm -rf filebeat* && \
+    rm -rf filebeat*.gz && \
+    mv filebeat-* filebeatsapp
+    #cd filebeat-* && \
+    #cp filebeatsapp/filebeat /bin && \
     apk del wget
     
     
@@ -22,7 +22,7 @@ ARG APP_HOME_DIR=/opt/app
 ARG APP_CONFIG_DIR=/opt/config
 ARG APP_LOGS_DIR=/var/logs/appLogs
 
-COPY --from=fbeat /bin/filebeat /bin/filebeat
+COPY --from=fbeat /opt/filebeatsapp/filebeat /bin/filebeat
 
 RUN mkdir -p $APP_HOME_DIR \
     mkdir -p $APP_CONFIG_DIR \
