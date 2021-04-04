@@ -1,4 +1,4 @@
-FROM openjdk:8-alpine as fbeat
+FROM alpine:3.13.4 as fbeat
 ENV FILEBEAT_VERSION=7.10.0
 
 RUN apk update && \
@@ -9,11 +9,9 @@ RUN apk update && \
     tar xzvf filebeat.tar.gz && \
     rm -rf filebeat*.gz && \
     mv filebeat-* filebeatsapp && \
-    #cd filebeat-* && \
-    cp filebeatsapp/filebeat /bin && \
     apk del wget
-    
-FROM openjdk:8-alpine
+        
+FROM openjdk:8
 MAINTAINER raju
 
 ARG HOST_APP_JAR_LOC
@@ -43,7 +41,4 @@ RUN chmod 755 ${APP_HOME_DIR}/application.sh
 
 ENV APP_CONFIG_DIR $APP_CONFIG_DIR
 
-#ENTRYPOINT ["java","-jar","/opt/app/application.jar","--spring.config.location=file:${APP_CONFIG_DIR}/","--logging.config=file:${APP_CONFIG_DIR}/log4j2.xml"]
-#CMD ["filebeat", "-e", "-c","${APP_CONFIG_DIR}/filebeat.yml","-e","-d","\"*\""]
-
-ENTRYPOINT ["sh","/opt/app/application.sh"]
+ENTRYPOINT ["/opt/app/application.sh"]
