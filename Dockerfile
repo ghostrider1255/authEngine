@@ -8,11 +8,10 @@ RUN apk update && \
     cd /opt && \
     tar xzvf filebeat.tar.gz && \
     rm -rf filebeat*.gz && \
-    mv filebeat-* filebeatsapp
+    mv filebeat-* filebeatsapp && \
     #cd filebeat-* && \
-    #cp filebeatsapp/filebeat /bin && \
+    cp filebeatsapp/filebeat /bin && \
     apk del wget
-    
     
 FROM openjdk:8-alpine
 MAINTAINER raju
