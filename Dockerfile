@@ -1,5 +1,18 @@
-FROM alpine:3.13.4 as fbeat
-ENV FILEBEAT_VERSION=7.10.0
+FROM alpine:3.13.4 as helperimg
+
+ARG FILEBEAT_VERSION=7.10.0
+ARG APP_HOME_DIR=/opt/app
+ARG APP_CONFIG_DIR=/opt/config
+ARG APP_LOGS_DIR=/var/logs/appLogs
+
+ARG TEMP_APP_DIR=/app
+ARG TEMP_CONFIG_DIR=/config
+
+RUN mkdir -p $TEMP_APP_DIR $TEMP_CONFIG_DIR
+
+COPY *.jar $TEMP_APP_DIR/application.jar
+COPY application.sh $TEMP_APP_DIR/
+COPY filebeat.yml log4j2.xml $TEMP_CONFIG_DIR/
 
 RUN apk update && \
     apk --no-cache add curl wget && \
@@ -14,31 +27,24 @@ RUN apk update && \
 FROM openjdk:8
 MAINTAINER raju
 
-ARG HOST_APP_JAR_LOC
-ARG APP_HOME_DIR=/opt/app
-ARG APP_CONFIG_DIR=/opt/config
-ARG APP_LOGS_DIR=/var/logs/appLogs
+RUN addgroup -S spring && adduser -S spring -G spring
+USER spring:spring
 
-COPY --from=fbeat /opt/filebeatsapp/filebeat /bin/filebeat
-
-RUN mkdir -p $APP_HOME_DIR \
-    mkdir -p $APP_CONFIG_DIR \
-    mkdir -p $APP_LOGS_DIR \
-    #ls -lrt /opt/app \
-    echo $HOST_APP_JAR_LOC
+RUN mkdir -p $APP_HOME_DIR $APP_CONFIG_DIR $APP_LOGS_DIR 
 
 VOLUME $APP_CONFIG_DIR
 VOLUME $APP_LOGS_DIR
 
-COPY *.jar $APP_HOME_DIR/application.jar
-COPY filebeat.yml $APP_CONFIG_DIR/
-COPY log4j2.xml $APP_CONFIG_DIR/
-COPY application.sh $APP_HOME_DIR/
+COPY --from=helperimg /opt/filebeatsapp/filebeat /bin/filebeat
+COPY --from=helperimg $TEMP_APP_DIR/* $APP_HOME_DIR/
+COPY --from=helperimg $TEMP_CONFIG_DIR/* $APP_CONFIG_DIR/
+
 
 #RUN mv ${APP_HOME_DIR}/*.jar ${APP_HOME_DIR}/application.jar
-RUN chmod 755 ${APP_HOME_DIR}/application.jar
-RUN chmod 755 ${APP_HOME_DIR}/application.sh
+RUN chmod 755 ${APP_HOME_DIR}/application.jar \
+    chmod 755 ${APP_HOME_DIR}/application.sh
 
 ENV APP_CONFIG_DIR $APP_CONFIG_DIR
+WORKDIR $APP_HOME_DIR
 
-ENTRYPOINT ["/opt/app/application.sh"]
+ENTRYPOINT ["application.sh"]
