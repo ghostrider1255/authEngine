@@ -27,7 +27,8 @@ RUN apk update && \
 FROM openjdk:8
 MAINTAINER raju
 
-RUN addgroup -S spring && adduser -S spring -G spring
+RUN groupadd spring && \
+	adduser spring spring
 USER spring:spring
 
 RUN mkdir -p $APP_HOME_DIR $APP_CONFIG_DIR $APP_LOGS_DIR 
