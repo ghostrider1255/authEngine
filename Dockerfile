@@ -1,9 +1,6 @@
 FROM alpine:3.13.4 as helperimg
 
 ARG FILEBEAT_VERSION=7.10.0
-ARG APP_HOME_DIR=/opt/app
-ARG APP_CONFIG_DIR=/opt/config
-ARG APP_LOGS_DIR=/var/logs/appLogs
 
 ARG TEMP_APP_DIR=/app
 ARG TEMP_CONFIG_DIR=/config
@@ -26,6 +23,10 @@ RUN apk update && \
         
 FROM openjdk:8
 MAINTAINER raju
+
+ARG APP_HOME_DIR=/opt/app
+ARG APP_CONFIG_DIR=/opt/config
+ARG APP_LOGS_DIR=/var/logs/appLogs
 
 #RUN addgroup --system spring && adduser --system spring -group spring
 #USER spring:spring
