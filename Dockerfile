@@ -2,8 +2,8 @@ FROM alpine:3.13.4 as helperimg
 
 ARG FILEBEAT_VERSION=7.10.0
 
-ARG TEMP_APP_DIR=/app
-ARG TEMP_CONFIG_DIR=/config
+ARG TEMP_APP_DIR=/appdir
+ARG TEMP_CONFIG_DIR=/configdir
 
 RUN mkdir -p $TEMP_APP_DIR $TEMP_CONFIG_DIR
 
