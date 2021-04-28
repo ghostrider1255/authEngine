@@ -42,8 +42,7 @@ COPY --from=helperimg $TEMP_CONFIG_DIR/* $APP_CONFIG_DIR/
 
 
 #RUN mv ${APP_HOME_DIR}/*.jar ${APP_HOME_DIR}/application.jar
-RUN chmod 755 ${APP_HOME_DIR}/application.jar \
-    chmod 755 ${APP_HOME_DIR}/application.sh
+RUN chmod 755 ${APP_HOME_DIR}/application.* 
 
 ENV APP_CONFIG_DIR $APP_CONFIG_DIR
 WORKDIR $APP_HOME_DIR
