@@ -1,15 +1,7 @@
-FROM alpine:3.13.4 as helperimg
+#file beats stage
+FROM alpine:3.13.4 as beat
 
 ARG FILEBEAT_VERSION=7.10.0
-
-ARG TEMP_APP_DIR=/appdir
-ARG TEMP_CONFIG_DIR=/configdir
-
-RUN mkdir -p $TEMP_APP_DIR $TEMP_CONFIG_DIR
-
-COPY *.jar $TEMP_APP_DIR/application.jar
-COPY application.sh $TEMP_APP_DIR/
-COPY filebeat.yml log4j2.xml $TEMP_CONFIG_DIR/
 
 RUN apk update && \
     apk --no-cache add curl wget && \
@@ -21,6 +13,14 @@ RUN apk update && \
     mv filebeat-* filebeatsapp && \
     apk del wget
         
+#application stage
+FROM alpine:3.13.4 as appstage
+
+COPY *.jar /appdir/application.jar
+COPY application.sh /sheldir/
+COPY filebeat.yml log4j2.xml /configdir/
+
+#final image
 FROM openjdk:8
 MAINTAINER raju
 
@@ -31,14 +31,15 @@ ARG APP_LOGS_DIR=/var/logs/appLogs
 #RUN addgroup --system spring && adduser --system spring -group spring
 #USER spring:spring
 
-RUN mkdir -p $APP_HOME_DIR $APP_CONFIG_DIR $APP_LOGS_DIR 
+RUN mkdir -p $APP_LOGS_DIR 
 
 VOLUME $APP_CONFIG_DIR
 VOLUME $APP_LOGS_DIR
 
-COPY --from=helperimg /opt/filebeatsapp/filebeat /bin/filebeat
-COPY --from=helperimg $TEMP_APP_DIR/* $APP_HOME_DIR/
-COPY --from=helperimg $TEMP_CONFIG_DIR/* $APP_CONFIG_DIR/
+COPY --from=beat /opt/filebeatsapp/filebeat /bin/filebeat
+COPY --from=appstage /appdir/application.jar $APP_HOME_DIR/
+COPY --from=appstage /sheldir/application.sh $APP_HOME_DIR/
+COPY --from=appstage /configdir/* $APP_CONFIG_DIR/
 
 
 #RUN mv ${APP_HOME_DIR}/*.jar ${APP_HOME_DIR}/application.jar
