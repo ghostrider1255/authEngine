@@ -36,8 +36,8 @@ COPY --from=appstage /appdir/application.jar $APP_HOME_DIR/
 COPY --from=appstage /sheldir/application.sh $APP_HOME_DIR/
 COPY --from=appstage /configdir/* $APP_CONFIG_DIR/
 
-RUN mkdir -p $APP_LOGS_DIR && \
-	chmod 755 ${APP_HOME_DIR}/application.*
+RUN mkdir -p $APP_LOGS_DIR 
+#	chmod 755 ${APP_HOME_DIR}/application.*
 
 VOLUME $APP_CONFIG_DIR
 VOLUME $APP_LOGS_DIR
